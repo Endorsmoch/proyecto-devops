@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user = auth()->user();
@@ -84,7 +84,7 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
-    
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -92,8 +92,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6'
         ]);
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(),400);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
         }
         $user = User::create(array_merge(
             $validator->validate(),
@@ -105,6 +105,16 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Successfully created',
             'user' => $user
-        ],201);
+        ], 201);
+    }
+
+    public function deleteUser()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $user->delete();
+        return response()->json(['message' => 'Successfully deleted account']);
     }
 }
