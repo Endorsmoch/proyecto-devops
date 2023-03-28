@@ -48,6 +48,15 @@ class AuthController extends Controller
         return response()->json(auth()->user());
     }
 
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        return response()->json($user);
+    }
+
     /**
      * Log the user out (Invalidate the token).
      *
