@@ -37,4 +37,6 @@ Route::group([
 ], function ($router) {
     Route::get('products', 'App\Http\Controllers\ProductController@index');
     Route::post('products', 'App\Http\Controllers\ProductController@store');
+    Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
+
 });

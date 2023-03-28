@@ -31,10 +31,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $user = auth()->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required|string',
@@ -57,7 +54,11 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+        return response()->json($product);
     }
 
     /**
