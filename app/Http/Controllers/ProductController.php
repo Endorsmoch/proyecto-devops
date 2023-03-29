@@ -19,10 +19,6 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
         return Product::all();
     }
 
