@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,4 +29,15 @@ Route::group([
     Route::post('me', 'App\Http\Controllers\AuthController@me');
     Route::post('register', 'App\Http\Controllers\AuthController@register');
     Route::delete('deleteUser', 'App\Http\Controllers\AuthController@deleteUser');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'store'
+], function ($router) {
+    Route::get('products', 'App\Http\Controllers\ProductController@index');
+    Route::post('products', 'App\Http\Controllers\ProductController@store');
+    Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
+    Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
+    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
 });
