@@ -43,4 +43,4 @@ COPY start-mysql.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start-mysql.sh
 
 # Run MySQL startup script and Laravel migration
-CMD start-mysql.sh && php /var/www/html/artisan migrate && service php8.2-fpm start && nginx -g "daemon off;"
+CMD start-mysql.sh && php /var/www/html/artisan migrate --force && service php8.2-fpm start && nginx -g "daemon off;"
