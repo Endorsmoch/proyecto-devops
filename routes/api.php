@@ -57,4 +57,10 @@ Route::group([
     Route::put('order/{id}', 'App\Http\Controllers\OrderController@update');
     Route::delete('order/{id}', 'App\Http\Controllers\OrderController@destroy');
 
+    //Address paths
+    Route::get('addresses', 'App\Http\Controllers\AddressController@index');
+    Route::post('addresses','App\Http\Controllers\AddressController@store');
+    Route::get('address/{id}', 'App\Http\Controllers\AddressController@show');
+    Route::put('address/{id}', 'App\Http\Controllers\AddressController@update');
+    Route::delete('address/{id}', 'App\Http\Controllers\AddressController@destroy');
 });
