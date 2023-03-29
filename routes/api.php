@@ -26,7 +26,15 @@ Route::group([
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
     Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
     Route::get('me', 'App\Http\Controllers\AuthController@me');
-    Route::get('user/{id}', 'App\Http\Controllers\AuthController@getUserById');
     Route::post('register', 'App\Http\Controllers\AuthController@register');
-    Route::delete('deleteUser', 'App\Http\Controllers\AuthController@deleteUser');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'account'
+], function ($router) {
+    Route::get('users', 'App\Http\Controllers\UserController@index');
+    Route::get('users/{id}', 'App\Http\Controllers\UserController@show');
+    Route::put('users/{id}', 'App\Http\Controllers\UserController@update');
+    Route::delete('users/{id}', 'App\Http\Controllers\UserController@destroy');
 });

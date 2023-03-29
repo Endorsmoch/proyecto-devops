@@ -48,15 +48,6 @@ class AuthController extends Controller
         return response()->json(auth()->user());
     }
 
-    public function getUserById($id)
-    {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-        return response()->json($user);
-    }
-
     /**
      * Log the user out (Invalidate the token).
      *
@@ -117,17 +108,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function deleteUser()
-    {
-        $user = auth()->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        $user->delete();
-        return response()->json(['message' => 'Successfully deleted account']);
-    }
-
-    
-
+ 
 
 }
