@@ -50,4 +50,11 @@ Route::group([
     Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
     Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
 
+    //Order paths
+    Route::get('orders', 'App\Http\Controllers\OrderController@index');
+    Route::post('orders','App\Http\Controllers\OrderController@store');
+    Route::get('order/{id}', 'App\Http\Controllers\OrderController@show');
+    Route::put('order/{id}', 'App\Http\Controllers\OrderController@update');
+    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@destroy');
+
 });
