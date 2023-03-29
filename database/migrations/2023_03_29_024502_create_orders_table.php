@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('idUser');
             $table->integer('idProduct');
             $table->integer('amount');
-            $table->timestamp('paymentDate');
+            $table->timestamp('paymentDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('paymentMethod');
         });
     }
