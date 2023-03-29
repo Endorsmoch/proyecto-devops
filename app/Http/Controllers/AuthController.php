@@ -108,15 +108,4 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function deleteUser()
-    {
-        $user = auth()->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        $user->delete();
-        return response()->json(['message' => 'Successfully deleted account']);
-    }
-
 }
-

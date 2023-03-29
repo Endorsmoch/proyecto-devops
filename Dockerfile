@@ -32,6 +32,13 @@ COPY . /var/www/html
 # Change ownership of the application
 RUN chown -R www-data:www-data /var/www/html
 
+# Copy the .env.example file and rename it to .env
+COPY .env.example /var/www/html/.env
+
+# Generate application key and clear cache
+RUN php /var/www/html/artisan key:generate && \
+    php /var/www/html/artisan config:cache
+
 # Remove default Nginx configuration file
 RUN rm /etc/nginx/sites-enabled/default
 
@@ -43,4 +50,4 @@ COPY start-mysql.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start-mysql.sh
 
 # Run MySQL startup script and Laravel migration
-CMD start-mysql.sh && php /var/www/html/artisan migrate && service php8.2-fpm start && nginx -g "daemon off;"
+CMD start-mysql.sh && php /var/www/html/artisan migrate --force && service php8.2-fpm start && nginx -g "daemon off;"

@@ -27,9 +27,18 @@ Route::group([
     Route::post('login', 'App\Http\Controllers\AuthController@login');
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
     Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
-    Route::post('me', 'App\Http\Controllers\AuthController@me');
+    Route::get('me', 'App\Http\Controllers\AuthController@me');
     Route::post('register', 'App\Http\Controllers\AuthController@register');
-    Route::delete('deleteUser', 'App\Http\Controllers\AuthController@deleteUser');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'account'
+], function ($router) {
+    Route::get('users', 'App\Http\Controllers\UserController@index');
+    Route::get('users/{id}', 'App\Http\Controllers\UserController@show');
+    Route::put('users/{id}', 'App\Http\Controllers\UserController@update');
+    Route::delete('users/{id}', 'App\Http\Controllers\UserController@destroy');
 });
 
 Route::group([
@@ -49,5 +58,12 @@ Route::group([
     Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
     Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
     Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
+
+    //Order paths
+    Route::get('orders', 'App\Http\Controllers\OrderController@index');
+    Route::post('orders','App\Http\Controllers\OrderController@store');
+    Route::get('order/{id}', 'App\Http\Controllers\OrderController@show');
+    Route::put('order/{id}', 'App\Http\Controllers\OrderController@update');
+    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@destroy');
 
 });
