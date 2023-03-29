@@ -29,9 +29,9 @@ class CommentController extends Controller
     {
         
         $validator = Validator::make($request->all(), [
-            'idProducto' => 'required',
-            'user_id' => 'required',
-            'texto' => 'required',
+            'idProduct' => 'required',
+            'idUser' => 'required',
+            'text' => 'required',
             'likes' => 'required'
         ]);
         if ($validator->fails()) {
@@ -60,9 +60,9 @@ class CommentController extends Controller
         if (Comment::where("id",$id)->exists()) {
             $comment = Comment::find($id);
             $comment->fill($request->only([
-                'idProducto',
-                'user_id',
-                'texto',
+                'idProduct',
+                'idUser',
+                'text',
                 'likes'
             ]));
             $comment->save();

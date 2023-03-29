@@ -12,7 +12,7 @@ class Comment extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idProducto','user_id', 'texto', 'likes'
+        'idProduct','idUser', 'text', 'likes'
     ];
 
     protected $table = 'comments';

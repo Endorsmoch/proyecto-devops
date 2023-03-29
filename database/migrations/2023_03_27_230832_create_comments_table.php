@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->increments('idComentario')->unique();
-            $table->integer('idProducto');
-            $table->integer('user_id');
-            $table->timestamp('fecha')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->text('texto');
+            $table->increments('id')->unique();
+            $table->integer('idProduct');
+            $table->integer('idUser');
+            $table->timestamp('date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->text('text');
             $table->integer('likes')->nullable();
         });
     }
