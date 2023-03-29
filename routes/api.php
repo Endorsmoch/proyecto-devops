@@ -38,5 +38,5 @@ Route::group([
     Route::get('products', 'App\Http\Controllers\ProductController@index');
     Route::post('products', 'App\Http\Controllers\ProductController@store');
     Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
-
+    Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
 });

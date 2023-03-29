@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("description");
             $table->string("manufacturer");
             $table->float("price");
-            $table->integer("quantity");
+            $table->integer("stock");
         });
     }
 
