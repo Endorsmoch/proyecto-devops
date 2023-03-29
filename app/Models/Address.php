@@ -14,5 +14,5 @@ class Address extends Model
         'idUser','houseNum', 'street', 'city', 'state','country','postalCode'
     ];
 
-    protected $table = 'address';
+    protected $table = 'addresses';
 }

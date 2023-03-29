@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Address;
+use Illuminate\Support\Facades\Validator;
 
 class AddressController extends Controller
 {
@@ -15,7 +19,7 @@ class AddressController extends Controller
      */
     public function index()
     {
-        return Order::all();
+        return Address::all();
     }
 
     /**
@@ -55,9 +59,9 @@ class AddressController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (Order::where("id",$id)->exists()) {
-            $order = Order::find($id);
-            $order->fill($request->only([
+        if (Address::where("id",$id)->exists()) {
+            $address = Address::find($id);
+            $address->fill($request->only([
                 'idUser',
                 'houseNum',
                 'street',
@@ -66,7 +70,7 @@ class AddressController extends Controller
                 'country',
                 'postalCode'
             ]));
-            $order->save();
+            $address->save();
             return response()->json([
                 "message" => "Address updated successfully",
                 'address' => $address
