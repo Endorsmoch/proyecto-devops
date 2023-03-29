@@ -2,9 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Comment;
-use App\Http\Controllers\CommentController;
-use App\Http\Resources\CommentResource;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,20 +14,30 @@ use App\Http\Resources\CommentResource;
 |
 */
 
-Route::get('/comment/{idComentario}', function ($id) {
-    return new CommentResource(Comment::findOrFail($id));
-});
-
-Route::get('/comments', function () {
-    return CommentResource::collection(Comment::all());
-});
-
-Route::put('/comment/{idComentario}', [CommentController::class, 'update']);
-
-Route::delete('/comment/{idComentario}', [CommentController::class, 'destroy']);
-
-Route::post('/comments', [CommentController::class, 'store']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('login', 'App\Http\Controllers\AuthController@login');
+    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
+    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
+    Route::post('me', 'App\Http\Controllers\AuthController@me');
+    Route::post('register', 'App\Http\Controllers\AuthController@register');
+    Route::delete('deleteUser', 'App\Http\Controllers\AuthController@deleteUser');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'store'
+], function ($router) {
+    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@show');
+    Route::get('comments', 'App\Http\Controllers\CommentController@index');
+    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@update');
+    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@detroy');
+    Route::post('comments','App\Http\Controllers\CommentController@create');
 });

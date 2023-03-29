@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -20,12 +28,21 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        return Comment::create($request->all(),[
+        
+        $validator = Validator::make($request->all(), [
             'idProducto' => 'required',
             'user_id' => 'required',
             'texto' => 'required',
-            'likes'=> 'required'
+            'likes' => 'required'
         ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $comment = Comment::create($validator->validate());
+        return response()->json([
+            'message'  => 'Comment successfully created',
+            'comment' => $comment
+        ],201);
     }
 
     /**
@@ -41,25 +58,26 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if(Comment::where('id', $id)->exists()){
+        if (Product::where("id",$id)->exists()) {
             $comment = Comment::find($id);
-            $comment->idProducto = $request->idProducto;
-            $comment->user_id = $request->user_id;
-            $comment->texto = $request->texto;
-            $comment->likes = $request->likes;
-
+            $comment->fill($request->only([
+                'idProducto',
+                'user_id',
+                'texto',
+                'likes'
+            ]));
             $comment->save();
             return response()->json([
-                "message" => "record updated successfully"
-
+                "message" => "Comment updated successfully",
+                'comment' => $comment
             ], 200);
-        }else{
+        } else {
             return response()->json([
-                "message" => "Comment not found"
-            ],404);
+                "error" => "Comment not found",
+            ], 404);
         }
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */
