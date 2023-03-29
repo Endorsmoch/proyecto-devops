@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth:api');
@@ -40,7 +39,7 @@ class CommentController extends Controller
         }
         $comment = Comment::create($validator->validate());
         return response()->json([
-            'message'  => 'Comment successfully created',
+            'message' => 'Comment successfully created',
             'comment' => $comment
         ],201);
     }
@@ -58,7 +57,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (Product::where("id",$id)->exists()) {
+        if (Comment::where("id",$id)->exists()) {
             $comment = Comment::find($id);
             $comment->fill($request->only([
                 'idProducto',
