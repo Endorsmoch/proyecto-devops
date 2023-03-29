@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -35,9 +36,17 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'store'
 ], function ($router) {
+
+    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@show');
+    Route::get('comments', 'App\Http\Controllers\CommentController@index');
+    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@update');
+    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@detroy');
+    Route::post('comments','App\Http\Controllers\CommentController@create');
+
     Route::get('products', 'App\Http\Controllers\ProductController@index');
     Route::post('products', 'App\Http\Controllers\ProductController@store');
     Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
     Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
     Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
+
 });
