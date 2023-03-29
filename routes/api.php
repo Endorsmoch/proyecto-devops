@@ -39,4 +39,5 @@ Route::group([
     Route::post('products', 'App\Http\Controllers\ProductController@store');
     Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
     Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
+    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
 });

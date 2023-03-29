@@ -65,27 +65,27 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-{
-    if (Product::where("id",$id)->exists()) {
-        $product = Product::find($id);
-        $product->fill($request->only([
-            'name',
-            'description',
-            'price',
-            'manufacturer',
-            'stock'
-        ]));
-        $product->save();
-        return response()->json([
-            "message" => "Product updated successfully",
-            'product' => $product
-        ], 200);
-    } else {
-        return response()->json([
-            "error" => "Product not found",
-        ], 404);
+    {
+        if (Product::where("id",$id)->exists()) {
+            $product = Product::find($id);
+            $product->fill($request->only([
+                'name',
+                'description',
+                'price',
+                'manufacturer',
+                'stock'
+            ]));
+            $product->save();
+            return response()->json([
+                "message" => "Product updated successfully",
+                'product' => $product
+            ], 200);
+        } else {
+            return response()->json([
+                "error" => "Product not found",
+            ], 404);
+        }
     }
-}
 
 
     /**
@@ -93,6 +93,16 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if (Product::where('id', $id)->exists()) {
+            $product = Product::find($id);
+            $product ->delete();
+            return response()->json([
+                "message" => "Product deleted successfully",
+            ], 202);
+        } else {
+            return response()->json([
+                "error" => "Product not found",
+            ], 404);
+        }
     }
 }
