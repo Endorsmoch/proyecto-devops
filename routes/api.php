@@ -36,13 +36,14 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'store'
 ], function ($router) {
-
-    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@show');
+    //Comment paths
     Route::get('comments', 'App\Http\Controllers\CommentController@index');
+    Route::post('comments','App\Http\Controllers\CommentController@store');
+    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@show');
     Route::put('comment/{id}', 'App\Http\Controllers\CommentController@update');
-    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@detroy');
-    Route::post('comments','App\Http\Controllers\CommentController@create');
+    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@destroy');
 
+    //Product paths
     Route::get('products', 'App\Http\Controllers\ProductController@index');
     Route::post('products', 'App\Http\Controllers\ProductController@store');
     Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
