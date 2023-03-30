@@ -67,9 +67,9 @@ Route::group([
     Route::delete('order/{id}', 'App\Http\Controllers\OrderController@getMethodDestroy');
 
     //Address paths
-    Route::get('addresses', 'App\Http\Controllers\AddressController@index');
-    Route::post('addresses','App\Http\Controllers\AddressController@store');
-    Route::get('address/{id}', 'App\Http\Controllers\AddressController@show');
-    Route::put('address/{id}', 'App\Http\Controllers\AddressController@update');
-    Route::delete('address/{id}', 'App\Http\Controllers\AddressController@destroy');
+    Route::get('addresses', 'App\Http\Controllers\AddressController@getMethodIndex');
+    Route::post('addresses','App\Http\Controllers\AddressController@getMethodStore');
+    Route::get('address/{id}', 'App\Http\Controllers\AddressController@getMethodShow');
+    Route::put('address/{id}', 'App\Http\Controllers\AddressController@getMethodUpdate');
+    Route::delete('address/{id}', 'App\Http\Controllers\AddressController@getMethodDestroy');
 });
