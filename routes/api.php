@@ -60,11 +60,11 @@ Route::group([
     Route::delete('products/{id}', 'App\Http\Controllers\ProductController@getMethodDestroy');
 
     //Order paths
-    Route::get('orders', 'App\Http\Controllers\OrderController@index');
-    Route::post('orders','App\Http\Controllers\OrderController@store');
-    Route::get('order/{id}', 'App\Http\Controllers\OrderController@show');
-    Route::put('order/{id}', 'App\Http\Controllers\OrderController@update');
-    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@destroy');
+    Route::get('orders', 'App\Http\Controllers\OrderController@getMethodIndex');
+    Route::post('orders','App\Http\Controllers\OrderController@getMethodStore');
+    Route::get('order/{id}', 'App\Http\Controllers\OrderController@getMethodShow');
+    Route::put('order/{id}', 'App\Http\Controllers\OrderController@getMethodUpdate');
+    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@getMethodDestroy');
 
     //Address paths
     Route::get('addresses', 'App\Http\Controllers\AddressController@index');
