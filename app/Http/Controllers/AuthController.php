@@ -18,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['getMethodLogin', 'getMethodRegister']]);
     }
 
     /**
@@ -108,4 +108,30 @@ class AuthController extends Controller
         ], 201);
     }
 
+
+    public function getMethodLogin() 
+    {
+        return $this->login();
+    }
+
+    public function getMethodMe()
+    {
+        return $this->me();
+    }
+
+    public function getMethodRegister(Request $request) 
+    {
+        return $this->register($request);
+    }
+
+    public function getMethodLogout() 
+    {
+        return $this->logout();
+    }
+
+    public function getMethodRefresh()
+    {
+        return $this->refresh();
+    }
+    
 }
