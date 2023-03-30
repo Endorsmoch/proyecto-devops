@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comment>
@@ -18,10 +17,10 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'idProduct' => $faker->randomDigit(),
-            'idUser' => $faker->randomDigit(),
-            'text' => $faker->text(),
-            'likes' => $faker->randomDigit()
+            'idProduct' => rand(1,999),
+            'idUser' => rand(1,999),
+            'text' => fake()->text(),
+            'likes' => fake()->randomNumber(4,false)
         ];
     }
 }
