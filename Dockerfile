@@ -35,9 +35,11 @@ RUN chown -R www-data:www-data /var/www/html
 # Copy the .env.example file and rename it to .env
 COPY .env.example /var/www/html/.env
 
-# Generate application key and clear cache
-RUN php /var/www/html/artisan key:generate && \
-    php /var/www/html/artisan config:cache
+# Generate application key
+RUN php /var/www/html/artisan key:generate --env=/var/www/html/.env
+
+# Clear cache
+RUN php /var/www/html/artisan config:cache
 
 # Remove default Nginx configuration file
 RUN rm /etc/nginx/sites-enabled/default
