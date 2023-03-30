@@ -77,4 +77,25 @@ class UserController extends Controller
             ], 404);
         }
     }
+
+    public function getMethodIndex() 
+    {
+        return $this->index();
+    }
+
+    public function getMethodShow(string $id)
+    {
+        return $this->show($id);
+    }
+
+    public function getMethodUpdate(Request $request, string $id) 
+    {
+        return $this->update($request, $id);
+    }
+
+    public function getMethodDestroy(string $id) 
+    {
+        return $this->destroy($id);
+    }
+
 }
