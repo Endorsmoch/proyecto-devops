@@ -17,6 +17,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         return User::all();
@@ -77,4 +78,13 @@ class UserController extends Controller
             ], 404);
         }
     }
+
+    public function getIndex(){
+        return $this->index();
+    }
+    
+    public function getShow(string $id){
+        return $this->show($id);
+    }
+
 }
