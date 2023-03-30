@@ -35,10 +35,10 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'account'
 ], function ($router) {
-    Route::get('users', 'App\Http\Controllers\UserController@index');
-    Route::get('users/{id}', 'App\Http\Controllers\UserController@show');
-    Route::put('users/{id}', 'App\Http\Controllers\UserController@update');
-    Route::delete('users/{id}', 'App\Http\Controllers\UserController@destroy');
+    Route::get('users', 'App\Http\Controllers\UserController@getMethodIndex');
+    Route::get('users/{id}', 'App\Http\Controllers\UserController@getMethodShow');
+    Route::put('users/{id}', 'App\Http\Controllers\UserController@getMethodUpdate');
+    Route::delete('users/{id}', 'App\Http\Controllers\UserController@getMethodDestroy');
 });
 
 Route::group([
@@ -46,11 +46,11 @@ Route::group([
     'prefix' => 'store'
 ], function ($router) {
     //Comment paths
-    Route::get('comments', 'App\Http\Controllers\CommentController@index');
-    Route::post('comments','App\Http\Controllers\CommentController@store');
-    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@show');
-    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@update');
-    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@destroy');
+    Route::get('comments', 'App\Http\Controllers\CommentController@getMethodIndex');
+    Route::post('comments','App\Http\Controllers\CommentController@getMethodStore');
+    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@getMethodShow');
+    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@getMethodUpdate');
+    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@getMethodDestroy');
 
     //Product paths
     Route::get('products', 'App\Http\Controllers\ProductController@index');
