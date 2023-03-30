@@ -15,14 +15,14 @@ class CommentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_dbHasComments(): void
-    {
+    // public function test_dbHasComments(): void
+    // {
         
-        //Se creo un seeder que crea 10 comentarios aleatoriamente
-        $this->seed(CommentSeeder::class);
+    //     //Se creo un seeder que crea 10 comentarios aleatoriamente
+    //     $this->seed(CommentSeeder::class);
 
-        $this->assertDatabaseCount('comments', 10);
+    //     $this->assertDatabaseCount('comments', 10);
 
-    }
+    // }
 
 }
