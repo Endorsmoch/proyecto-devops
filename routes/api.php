@@ -53,11 +53,11 @@ Route::group([
     Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@getMethodDestroy');
 
     //Product paths
-    Route::get('products', 'App\Http\Controllers\ProductController@index');
-    Route::post('products', 'App\Http\Controllers\ProductController@store');
-    Route::get('products/{id}', 'App\Http\Controllers\ProductController@show');
-    Route::put('products/{id}', 'App\Http\Controllers\ProductController@update');
-    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@destroy');
+    Route::get('products', 'App\Http\Controllers\ProductController@getMethodIndex');
+    Route::post('products', 'App\Http\Controllers\ProductController@getMethodStore');
+    Route::get('products/{id}', 'App\Http\Controllers\ProductController@getMethodShow');
+    Route::put('products/{id}', 'App\Http\Controllers\ProductController@getMethodUpdate');
+    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@getMethodDestroy');
 
     //Order paths
     Route::get('orders', 'App\Http\Controllers\OrderController@index');

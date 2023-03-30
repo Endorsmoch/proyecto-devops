@@ -10,39 +10,39 @@ class CommentControllerTest extends TestCase
 {
     public function testIndexIsCalledOnce()
     {
-        $userControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['index'])->getMock();
-        $userControllerMock->expects($this->once())->method('index');
-        $userControllerMock->getMethodIndex();   
+        $commentControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['index'])->getMock();
+        $commentControllerMock->expects($this->once())->method('index');
+        $commentControllerMock->getMethodIndex();   
     }
 
     public function testStoreIsCalledOnce()
     {
         $request = new Request();
-        $userControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['store'])->getMock();
-        $userControllerMock->expects($this->once())->method('store');
-        $userControllerMock->getMethodStore($request);   
+        $commentControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['store'])->getMock();
+        $commentControllerMock->expects($this->once())->method('store');
+        $commentControllerMock->getMethodStore($request);   
     }
 
     public function testShowIsCalledOnce()
     {
-        $userControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['show'])->getMock();
-        $userControllerMock->expects($this->once())->method('show');
-        $userControllerMock->getMethodShow("1");   
+        $commentControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['show'])->getMock();
+        $commentControllerMock->expects($this->once())->method('show');
+        $commentControllerMock->getMethodShow("1");   
     }
 
     public function testUpdateIsCalledOnce()
     {
         $request = new Request();
-        $userControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['update'])->getMock();
-        $userControllerMock->expects($this->once())->method('update');
-        $userControllerMock->getMethodUpdate($request,"1");  
+        $commentControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['update'])->getMock();
+        $commentControllerMock->expects($this->once())->method('update');
+        $commentControllerMock->getMethodUpdate($request,"1");  
     }
 
     public function testDestroyIsCalledOnce()
     {
-        $userControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['destroy'])->getMock();
-        $userControllerMock->expects($this->once())->method('destroy');
-        $userControllerMock->getMethodDestroy("1"); 
+        $commentControllerMock = $this->getMockBuilder(CommentController::class)->onlyMethods(['destroy'])->getMock();
+        $commentControllerMock->expects($this->once())->method('destroy');
+        $commentControllerMock->getMethodDestroy("1"); 
     }
 
     
