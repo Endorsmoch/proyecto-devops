@@ -24,11 +24,11 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('login', 'App\Http\Controllers\AuthController@login');
-    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
-    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
-    Route::get('me', 'App\Http\Controllers\AuthController@me');
-    Route::post('register', 'App\Http\Controllers\AuthController@register');
+    Route::post('login', 'App\Http\Controllers\AuthController@getMethodLogin');
+    Route::post('logout', 'App\Http\Controllers\AuthController@getMethodLogout');
+    Route::post('refresh', 'App\Http\Controllers\AuthController@getMethodRefresh');
+    Route::get('me', 'App\Http\Controllers\AuthController@getMethodMe');
+    Route::post('register', 'App\Http\Controllers\AuthController@getMethodRegister');
 });
 
 Route::group([
