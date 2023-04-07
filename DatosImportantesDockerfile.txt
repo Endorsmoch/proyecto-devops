@@ -1,17 +1,5 @@
-Cambios
-- Ahora el docker no instala un servidor de bd mysql en el dockerfile, se usa mysql local
-- Se modifico .env.example y .env
-   - DB_USERNAME=root
-   - DB_PASSWORD=123456789
-   - DB_HOST=host.docker.internal
-
-
 Inidicaciones
 - MySQLActual8.0.32.0 se debe encender desde servicios de mi laptop
 - Se debe verificar que funcione el servicios
     - Si falla reconfigurar el server usando el instalador de mysql community
 - En Workbench se puede ver como se actualiza la db
-
-FALTA:
-    - hotfix/API-12 falta crear su issue en github "Corrigiendo Dockerfile: no bd en la imagen" y publicar rama con este nuevo cambio. El proyecto correcto es el que se encuentra en XAMPP.
-   - En el Jenkins cambiar la URL del repo en dos lugares y la rama
