@@ -6,12 +6,16 @@ pipeline {
     }
 
     stages {
+        stage('Instalar Dependencias') {
+            steps {
+                bat 'composer install'
+            }
+        }
         stage('Construir Imagen Docker') {
             steps {
                 bat "docker build -t store-${GIT_BRANCH.split("/")[1]}:1.0.0-2 ."
             }
         }
-        
         stage('Desplegar Imagen Docker') {
             steps {
                 bat 'docker rm pipeline'
