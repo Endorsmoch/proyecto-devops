@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    environment {
+        BRANCH_NAME = '${GIT_BRANCH.split("/")[1]}'
+    }
+
+    stages {
+        stage('Construir Imagen Docker') {
+            steps {
+                bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
+            }
+        }
+        
+        stage('Desplegar Imagen Docker') {
+            steps {
+                bat 'docker rm pipeline'
+                bat 'docker run -d -p 80:80 --name store-${BRANCH_NAME}:1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '¡El segundo pipeline se ha completado exitosamente!'
+        }
+        
+        failure {
+            echo 'El segundo pipeline ha fallado!'
+        }
+    }
+}
