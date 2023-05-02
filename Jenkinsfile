@@ -2,10 +2,11 @@ pipeline {
     agent any
     
     stages {
-        stage('Clonar Repositorio de GitHub') {
+        stage('Checkout') {
             steps {
-                bat 'rmdir /S /Q PipelineJenkinsProject'
-                bat 'git clone https://github.com/Endorsmoch/proyecto-devops.git'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/develop']],
+                          userRemoteConfigs: [[url: 'https://github.com/Endorsmoch/proyecto-devops.git']]])
             }
         }
         stage('Ejecutar Test Cases') {
