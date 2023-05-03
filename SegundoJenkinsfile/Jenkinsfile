@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Desplegar Imagen Docker') {
             steps {
-                bat "docker run -d -p 80:80 --name store-${BRANCH_NAME}:1.0.0-${currentBuild.number} store-1.0.0-${currentBuild.number}"
+                bat "docker run -d -p 80:80 --name store-1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}"
             }
         }
     }
