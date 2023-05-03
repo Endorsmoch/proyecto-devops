@@ -1,10 +1,9 @@
 pipeline {
     agent any
-
     environment {
         BRANCH_NAME = "${GIT_BRANCH.split("/")[1]}"
+        BUILD_NUMBER_MINUS_ONE = "${BUILD_NUMBER.toInteger() - 1}"
     }
-
     stages {
         stage('Instalar Dependencias') {
             steps {
@@ -17,8 +16,17 @@ pipeline {
             }
         }
         stage('Detener Contenedores Docker') {
-            steps {
-                bat 'docker stop $(docker ps -q)'
+            stage('Build') {
+                when {
+                    expression {
+                        def containerName = "store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
+                        def containerExists = bat "docker ps -q -f name=${containerName} > nul 2>&1 && echo found || echo not found"
+                        containerExists == 'found'
+                    }
+                }
+                steps {
+                    bat "docker stop store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
+                }
             }
         }
         stage('Desplegar Imagen Docker') {
@@ -27,10 +35,9 @@ pipeline {
             }
         }
     }
-    
     post {
         success {
-            echo '¡El segundo pipeline se ha completado exitosamente!'
+            echo '¡El segundo pipeline se ha completado exitosamente! Contenedor ejecutandose'
         }
         
         failure {
