@@ -12,6 +12,11 @@ pipeline {
                 bat 'composer install'
             }
         }
+        stage('Detener Contenedores Docker') {
+            steps {
+                bat "docker stop store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
+            } 
+        }
         stage('Construir Imagen Docker') {
             steps {
                 bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
