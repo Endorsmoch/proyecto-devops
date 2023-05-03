@@ -17,18 +17,6 @@ pipeline {
                 bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
             }
         }
-        stage('Detener Contenedores Docker') {
-            when {
-                expression {
-                    def containerName = "store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
-                    def containerExists = bat "docker ps -q -f name=${containerName} > nul 2>&1 && echo found || echo not found"
-                    containerExists.trim() == 'found'
-                }
-            }
-            steps {
-                bat "docker stop store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
-            } 
-        }
         stage('Desplegar Imagen Docker') {
             steps {
                 bat "docker run -d -p 80:80 --name store-1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}"
