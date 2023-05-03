@@ -16,6 +16,11 @@ pipeline {
                 bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
             }
         }
+        stage('Detener Contenedores Docker') {
+            steps {
+                bat 'docker stop $(docker ps -q)'
+            }
+        }
         stage('Desplegar Imagen Docker') {
             steps {
                 bat "docker run -d -p 80:80 --name store-1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}"
