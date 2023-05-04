@@ -2,13 +2,6 @@ pipeline {
     agent any
     
     stages {
-        stage('Clonar Repositorio de Github') {
-            steps {
-                checkout([$class: 'GitSCM',
-                          branches: [[name: '*/develop']],
-                          userRemoteConfigs: [[url: 'https://github.com/Endorsmoch/proyecto-devops.git']]])
-            }
-        }
         stage('Instalar Dependencias') {
             steps {
                 bat 'composer install'
