@@ -22,12 +22,12 @@ pipeline {
         }
         stage('Construir Imagen Docker') {
             steps {
-                bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
+                bat "docker build -t store-${BRANCH_NAME}:1.0.0-${params.BUILD_NUMBER} ."
             }
         }
         stage('Desplegar Imagen Docker') {
             steps {
-                bat "docker run -d -p 80:80 --name store-1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}"
+                bat "docker run -d -p 80:80 --name store-1.0.0-${params.BUILD_NUMBER} store-${BRANCH_NAME}:1.0.0-${params.BUILD_NUMBER}"
             }
         }
     }
