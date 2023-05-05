@@ -12,31 +12,26 @@ pipeline {
     }
 
     stages {
-        stage('Despliegue') {
-            steps {
-                echo "El número de versión es: ${buildNumberWithoutQuotes}"
-            }
-        }
-        stage('Detener Contenedores Docker') {
+        stage('Detener Contenedores') {
             steps {
                 bat 'FOR /f "tokens=*" %%i IN (\'docker ps -q\') DO docker stop %%i'
             }
         }
-        stage('Construir Imagen Docker') {
+        stage('Construir Imagen') {
             steps {
-                bat "docker build -t store-${BRANCH_NAME}:1.0.0-${currentBuild.number} ."
+                bat "docker build -t store-${BRANCH_NAME}:1.0.0-${buildNumberWithoutQuotes} ."
             }
         }
-        stage('Desplegar Imagen Docker') {
+        stage('Desplegar Imagen') {
             steps {
-                bat "docker run -d -p 80:80 --name store-1.0.0-${currentBuild.number} store-${BRANCH_NAME}:1.0.0-${currentBuild.number}"
+                bat "docker run -d -p 80:80 --name store-1.0.0-${buildNumberWithoutQuotes} store-${BRANCH_NAME}:1.0.0-${buildNumberWithoutQuotes}"
             }
         }
     }
 
     post {
         success {
-            echo '¡El segundo pipeline se ha completado exitosamente! Contenedor ejecutandose'
+            echo '¡El segundo pipeline se ha completado exitosamente!'
         }
         failure {
             echo 'El segundo pipeline ha fallado!'
