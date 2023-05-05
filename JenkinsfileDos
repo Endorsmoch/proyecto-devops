@@ -1,12 +1,20 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'BUILD_NUMBER', defaultValue: '', description: 'Número de versión')
+    }
+
     environment {
         BRANCH_NAME = "${GIT_BRANCH.split("/")[1]}"
-        BUILD_NUMBER_MINUS_ONE = "${BUILD_NUMBER.toInteger() - 1}"
     }
 
     stages {
+        stage('Despliegue') {
+            steps {
+                echo "El número de versión es: ${params.BUILD_NUMBER}"
+            }
+        }
         stage('Detener Contenedores Docker') {
             steps {
                 bat 'FOR /f "tokens=*" %%i IN (\'docker ps -q\') DO docker stop %%i'
