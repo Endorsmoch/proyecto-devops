@@ -9,8 +9,8 @@ pipeline {
     stages {
         stage('Detener Contenedores Docker') {
             steps {
-                bat "docker stop store-1.0.0-${BUILD_NUMBER_MINUS_ONE}"
-            } 
+                bat 'FOR /f "tokens=*" %%i IN (\'docker ps -q\') DO docker stop %%i'
+            }
         }
         stage('Construir Imagen Docker') {
             steps {
