@@ -9,8 +9,8 @@ pipeline {
     stages {
         stage('Detener Contenedores Docker') {
             steps {
-                bat 'FOR /f "tokens=*" %i IN ("docker ps -q") DO docker stop %i ^'
-            } 
+                bat 'FOR /f "tokens=*" %i IN (\'docker ps -q\') DO docker stop %i'
+            }
         }
         stage('Construir Imagen Docker') {
             steps {
