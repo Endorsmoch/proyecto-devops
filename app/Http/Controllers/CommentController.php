@@ -34,8 +34,7 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         try {
-            $requestContent = json_decode($request->getContent(), true);
-            Log::debug('Store comment request body: '. $this->obfuscateSensitiveData($requestContent));
+            Log::debug('Store comment request body: '. $request->getContent());
             $validator = Validator::make($request->all(), [
                 'idProduct' => 'required',
                 'idUser' => 'required',
@@ -85,7 +84,7 @@ class CommentController extends Controller
     {
         $method_name = 'update()';
         try {
-            Log::debug('Update comment request body: '. $reques->getContent());
+            Log::debug('Update comment request body: '. $request->getContent());
             if (Comment::where("id",$id)->exists()) {
                 $comment = Comment::find($id);
                 $comment->fill($request->only([
