@@ -139,7 +139,7 @@ class OrderController extends Controller
     }
 
     private function logOrderNotFound(String $method) {
-        Log::warning("Comment not Found while calling $method method in OrderController.");
+        Log::warning("Order not Found while calling $method method in OrderController.");
     }
 
     public function getMethodIndex() 

@@ -20,7 +20,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        try {
+            return Product::all();
+        } catch (\Exception $e) {
+            Log::error("Error while getting all products: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while getting all products'], 500);
+        }
     }
 
     /**
@@ -28,22 +33,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => 'required|string',
-            'manufacturer' => 'required|string',
-            'price' => 'required',
-            'stock' => 'required'
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+        try {
+            Log::debug('Store product request body: '. $request->getContent());
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'description' => 'required|string',
+                'manufacturer' => 'required|string',
+                'price' => 'required',
+                'stock' => 'required'
+            ]);
+            if ($validator->fails()) {
+                Log::warning("Validation failed while store product operation: ".implode('|',$validator->errors()->all()));
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+            $product = Product::create($validator->validate());
+            return response()->json([
+                'message' => 'Product successfully created',
+                'product' => $product
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error("Error while storing product: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while storing product'], 500);
         }
-        $product = Product::create($validator->validate());
-        return response()->json([
-            'message' => 'Product successfully created',
-            'product' => $product
-        ], 201);
+       
     }
 
     /**
@@ -51,9 +63,15 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::find($id);
-        if (!$product) {
+        $method_name = 'show()';
+        try {
+            $product = Product::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e ) {
+            $this->logProductNotFound($method_name);
             return response()->json(['error' => 'Product not found'], 404);
+        } catch (\Exception $e) {
+            Log::error("Error while looking for the product with ID {$id}: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'An error occurred while looking for the product'], 500);
         }
         return response()->json($product);
     }
@@ -63,25 +81,34 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (Product::where("id",$id)->exists()) {
-            $product = Product::find($id);
-            $product->fill($request->only([
-                'name',
-                'description',
-                'price',
-                'manufacturer',
-                'stock'
-            ]));
-            $product->save();
-            return response()->json([
-                "message" => "Product updated successfully",
-                'product' => $product
-            ], 200);
-        } else {
-            return response()->json([
-                "error" => "Product not found",
-            ], 404);
+        $method_name = 'update()';
+        try {
+            Log::debug('Update product request body: '. $request->getContent());
+            if (Product::where("id",$id)->exists()) {
+                $product = Product::find($id);
+                $product->fill($request->only([
+                    'name',
+                    'description',
+                    'price',
+                    'manufacturer',
+                    'stock'
+                ]));
+                $product->save();
+                return response()->json([
+                    "message" => "Product updated successfully",
+                    'product' => $product
+                ], 200);
+            } else {
+                $this->logProductNotFound($method_name);
+                return response()->json([
+                    "error" => "Product not found",
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error while updating product with ID $id: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while updating product'], 500);
         }
+        
     }
 
 
@@ -90,17 +117,29 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        if (Product::where('id', $id)->exists()) {
-            $product = Product::find($id);
-            $product ->delete();
-            return response()->json([
-                "message" => "Product deleted successfully",
-            ], 202);
-        } else {
-            return response()->json([
-                "error" => "Product not found",
-            ], 404);
+        $method_name = 'destroy()';
+        try {
+            if (Product::where('id', $id)->exists()) {
+                $product = Product::find($id);
+                $product ->delete();
+                return response()->json([
+                    "message" => "Product deleted successfully",
+                ], 202);
+            } else {
+                $this->logProductNotFound($method_name);
+                return response()->json([
+                    "error" => "Product not found",
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error while deleting product with ID $id: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while deleting product'], 500);
         }
+        
+    }
+
+    private function logProductNotFound(String $method) {
+        Log::warning("Product not Found while calling $method method in ProductController.");
     }
 
     public function getMethodIndex() 
