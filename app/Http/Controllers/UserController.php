@@ -56,7 +56,8 @@ class UserController extends Controller
     {
         $method_name = 'update()';
         try {
-            Log::debug('Update user request body: '. $this->obfuscateSensitiveData($request->getContent()));
+            $requestContent = json_decode($request->getContent(), true);
+            Log::debug('Update user request body: '. $this->obfuscateSensitiveData($requestContent));
             if (User::where("id",$id)->exists()) {
                 $user = User::find($id);
                 $user->fill($request->only([
@@ -119,7 +120,7 @@ class UserController extends Controller
             }
         }
     
-        return $data;
+        return json_encode($data);
     }
 
     private function isSensitiveData(string $key)
