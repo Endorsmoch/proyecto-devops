@@ -34,11 +34,15 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
+        $method_name = 'show()';
         try {
             $user = User::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e){
+            $this->logUserNotFound($method_name);
+            return response()->json(['error' => 'User not found'], 404);
         } catch (\Exception $e) {
             Log::error("Error while looking for the user with ID {$id}: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
-            return response()->json(['error' => 'User not found'], 404);
+            return response()->json(['error' => 'An error occurred while looking for the user'], 500);
         }
         
         return response()->json($user);
@@ -50,6 +54,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $method_name = 'update()';
         try {
             Log::debug('Update user request body: '. $this->obfuscateSensitiveData($request->all()));
             if (User::where("id",$id)->exists()) {
@@ -65,6 +70,7 @@ class UserController extends Controller
                     'user' => $user
                 ], 200);
             } else {
+                $this->logUserNotFound($method_name);
                 return response()->json([
                     "error" => "User not found",
                 ], 404);
@@ -82,6 +88,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+        $method_name = 'destroy()';
         try{
             if (User::where('id', $id)->exists()) {
                 $user = User::find($id);
@@ -90,6 +97,7 @@ class UserController extends Controller
                     "message" => "User deleted successfully",
                 ], 202);
             } else {
+                $this->logUserNotFound($method_name);
                 return response()->json([
                     "error" => "User not found",
                 ], 404);
@@ -118,6 +126,11 @@ class UserController extends Controller
     {
         return in_array($key, ['email', 'password']);
     }
+
+    private function logUserNotFound(String $method) {
+        Log::warning("User not Found while calling $method method in UserController.");
+    }
+
     public function getMethodIndex() 
     {
         return $this->index();
