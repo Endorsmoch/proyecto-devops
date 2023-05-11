@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -14,13 +15,18 @@ class UserController extends Controller
     {
         $this->middleware('auth:api');
     }
+
     /**
      * Display a listing of the resource.
      */
-
     public function index()
     {
-        return User::all();
+        try {
+            return User::all();
+        } catch (\Exception $e){
+            Log::error("Error while getting all users: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while getting all users'], 500);
+        }
     }
 
     /**
@@ -28,10 +34,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
-        if (!$user) {
+        try {
+            $user = User::findOrFail($id);
+        } catch (\Exception $e) {
+            Log::error("Error while looking for the user with ID {$id}: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
             return response()->json(['error' => 'User not found'], 404);
         }
+        
         return response()->json($user);
     
     }
@@ -41,23 +50,30 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (User::where("id",$id)->exists()) {
-            $user = User::find($id);
-            $user->fill($request->only([
-                'userName',
-                'email',
-                'password',
-            ]));
-            $user->save();
-            return response()->json([
-                "message" => "User updated successfully",
-                'user' => $user
-            ], 200);
-        } else {
-            return response()->json([
-                "error" => "User not found",
-            ], 404);
+        try {
+            Log::debug('Update user request body: '. $this->obfuscateSensitiveData($request->all()));
+            if (User::where("id",$id)->exists()) {
+                $user = User::find($id);
+                $user->fill($request->only([
+                    'userName',
+                    'email',
+                    'password',
+                ]));
+                $user->save();
+                return response()->json([
+                    "message" => "User updated successfully",
+                    'user' => $user
+                ], 200);
+            } else {
+                return response()->json([
+                    "error" => "User not found",
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error while updating user with ID $id: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while updating user'], 500);
         }
+        
     }
 
 
@@ -66,19 +82,42 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        if (User::where('id', $id)->exists()) {
-            $user = User::find($id);
-            $user ->delete();
-            return response()->json([
-                "message" => "User deleted successfully",
-            ], 202);
-        } else {
-            return response()->json([
-                "error" => "User not found",
-            ], 404);
+        try{
+            if (User::where('id', $id)->exists()) {
+                $user = User::find($id);
+                $user ->delete();
+                return response()->json([
+                    "message" => "User deleted successfully",
+                ], 202);
+            } else {
+                return response()->json([
+                    "error" => "User not found",
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error while deleting user with ID $id: $e->getMessage()", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while deleting user'], 500);
         }
+        
     }
 
+    private function obfuscateSensitiveData(array $data) 
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->obfuscateSensitiveData($value);
+            } elseif ($this->isSensitiveData($key)) {
+                $data[$key] = '***'; // Ofuscar información sensible
+            }
+        }
+    
+        return $data;
+    }
+
+    private function isSensitiveData(string $key)
+    {
+        return in_array($key, ['email', 'password']);
+    }
     public function getMethodIndex() 
     {
         return $this->index();
