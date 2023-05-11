@@ -34,7 +34,7 @@ class AuthController extends Controller
             Log::debug('User log in request body: '. $this->obfuscateSensitiveData($requestContent));
             $credentials = request(['email', 'password']);
             if (!$token = auth()->attempt($credentials)) {
-                Log::warning("Unauthorized Log In");
+                Log::warning("Error while executing login operation: Unauthorized Log In.");
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
             $user = auth()->user();
@@ -132,7 +132,7 @@ class AuthController extends Controller
                 'password' => 'required|string|min:6'
             ]);
             if ($validator->fails()) {
-                Log::warning("Validation failed while register operation: ".implode('|',$validator->errors()->all()));
+                Log::warning("Validation failed while register user operation: ".implode('|',$validator->errors()->all()));
                 return response()->json($validator->errors()->toJson(), 400);
             }
             $user = User::create(array_merge(

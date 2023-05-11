@@ -35,10 +35,10 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'account'
 ], function ($router) {
-    Route::get('users', 'App\Http\Controllers\UserController@getMethodIndex');
-    Route::get('users/{id}', 'App\Http\Controllers\UserController@getMethodShow');
-    Route::put('users/{id}', 'App\Http\Controllers\UserController@getMethodUpdate');
-    Route::delete('users/{id}', 'App\Http\Controllers\UserController@getMethodDestroy');
+    Route::get('users', 'App\Http\Controllers\UserController@getMethodIndex')->name('account.users');
+    Route::get('users/{id}', 'App\Http\Controllers\UserController@getMethodShow')->name('account.users{id}');
+    Route::put('users/{id}', 'App\Http\Controllers\UserController@getMethodUpdate')->name('account.users{id}');
+    Route::delete('users/{id}', 'App\Http\Controllers\UserController@getMethodDestroy')->name('account.users{id}');
 });
 
 Route::group([
@@ -46,30 +46,30 @@ Route::group([
     'prefix' => 'store'
 ], function ($router) {
     //Comment paths
-    Route::get('comments', 'App\Http\Controllers\CommentController@getMethodIndex');
-    Route::post('comments','App\Http\Controllers\CommentController@getMethodStore');
-    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@getMethodShow');
-    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@getMethodUpdate');
-    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@getMethodDestroy');
+    Route::get('comments', 'App\Http\Controllers\CommentController@getMethodIndex')->name('store.comments');
+    Route::post('comments','App\Http\Controllers\CommentController@getMethodStore')->name('store.comments');
+    Route::get('comment/{id}', 'App\Http\Controllers\CommentController@getMethodShow')->name('store.comment{id}');
+    Route::put('comment/{id}', 'App\Http\Controllers\CommentController@getMethodUpdate')->name('store.comment{id}');
+    Route::delete('comment/{id}', 'App\Http\Controllers\CommentController@getMethodDestroy')->name('store.comment{id}');
 
     //Product paths
-    Route::get('products', 'App\Http\Controllers\ProductController@getMethodIndex');
-    Route::post('products', 'App\Http\Controllers\ProductController@getMethodStore');
-    Route::get('products/{id}', 'App\Http\Controllers\ProductController@getMethodShow');
-    Route::put('products/{id}', 'App\Http\Controllers\ProductController@getMethodUpdate');
-    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@getMethodDestroy');
+    Route::get('products', 'App\Http\Controllers\ProductController@getMethodIndex')->name('store.products');
+    Route::post('products', 'App\Http\Controllers\ProductController@getMethodStore')->name('store.products');
+    Route::get('products/{id}', 'App\Http\Controllers\ProductController@getMethodShow')->name('store.products{id}');
+    Route::put('products/{id}', 'App\Http\Controllers\ProductController@getMethodUpdate')->name('store.products{id}');
+    Route::delete('products/{id}', 'App\Http\Controllers\ProductController@getMethodDestroy')->name('store.products{id}');
 
     //Order paths
-    Route::get('orders', 'App\Http\Controllers\OrderController@getMethodIndex');
-    Route::post('orders','App\Http\Controllers\OrderController@getMethodStore');
-    Route::get('order/{id}', 'App\Http\Controllers\OrderController@getMethodShow');
-    Route::put('order/{id}', 'App\Http\Controllers\OrderController@getMethodUpdate');
-    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@getMethodDestroy');
+    Route::get('orders', 'App\Http\Controllers\OrderController@getMethodIndex')->name('store.orders');
+    Route::post('orders','App\Http\Controllers\OrderController@getMethodStore')->name('store.orders');
+    Route::get('order/{id}', 'App\Http\Controllers\OrderController@getMethodShow')->name('store.order{id}');
+    Route::put('order/{id}', 'App\Http\Controllers\OrderController@getMethodUpdate')->name('store.order{id}');
+    Route::delete('order/{id}', 'App\Http\Controllers\OrderController@getMethodDestroy')->name('store.order{id}');
 
     //Address paths
-    Route::get('addresses', 'App\Http\Controllers\AddressController@getMethodIndex');
-    Route::post('addresses','App\Http\Controllers\AddressController@getMethodStore');
-    Route::get('address/{id}', 'App\Http\Controllers\AddressController@getMethodShow');
-    Route::put('address/{id}', 'App\Http\Controllers\AddressController@getMethodUpdate');
-    Route::delete('address/{id}', 'App\Http\Controllers\AddressController@getMethodDestroy');
+    Route::get('addresses', 'App\Http\Controllers\AddressController@getMethodIndex')->name('store.addresses');
+    Route::post('addresses','App\Http\Controllers\AddressController@getMethodStore')->name('store.addresses');
+    Route::get('address/{id}', 'App\Http\Controllers\AddressController@getMethodShow')->name('store.address{id}');
+    Route::put('address/{id}', 'App\Http\Controllers\AddressController@getMethodUpdate')->name('store.address{id}');
+    Route::delete('address/{id}', 'App\Http\Controllers\AddressController@getMethodDestroy')->name('store.address{id}');
 });
