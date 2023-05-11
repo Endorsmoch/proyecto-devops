@@ -28,15 +28,22 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login()
-    {
-        $credentials = request(['email', 'password']);
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+    {   
+        try {
+            Log::debug('User log in request body: '. $this->obfuscateSensitiveData($request->getContent()));
+            $credentials = request(['email', 'password']);
+            if (!$token = auth()->attempt($credentials)) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $user = auth()->user();
+            $user->lastLoginDate = now();
+            $user->save();
+            return $this->respondWithToken($token);
+        } catch (\Exception $e) {
+            Log::error("Error while loggin in: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while logging in'], 500);
         }
-        $user = auth()->user();
-        $user->lastLoginDate = now();
-        $user->save();
-        return $this->respondWithToken($token);
+        
     }
 
     /**
@@ -46,7 +53,17 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        try {
+            Log::debug('Me method request body: '. $this->obfuscateSensitiveData($request->getContent()));
+            $user = auth()->userOrFail();
+            return response()->json($user);
+        } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+            Log::error("Error while fetching current user: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'User not found'], 404);
+        } catch (\Exception $e) {
+            Log::error("Error while fetching current user: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Internal server error'], 500);
+        }
     }
 
     /**
@@ -56,6 +73,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        Log::debug('User Logout request body: '. $this->obfuscateSensitiveData($request->getContent()));
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -67,7 +85,19 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        try {
+            Log::debug('Refresh method request body: '. $this->obfuscateSensitiveData($request->getContent()));
+            return $this->respondWithToken(auth()->refresh());
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            Log::warning('Invalid token while refreshing token');
+            return response()->json(['error' => 'Token invalid'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            Log::warning('Expired token while refreshing token');
+            return response()->json(['error' => 'Token expired'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            Log::warning('Absent token while refreshing token');
+            return response()->json(['error' => 'Token absent'], 401);
+        }
     }
 
     /**
@@ -88,27 +118,52 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'userName' => 'required',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6'
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+        try{
+            Log::debug('Register user request body: '. $this->obfuscateSensitiveData($request->getContent()));
+            $validator = Validator::make($request->all(), [
+                'userName' => 'required',
+                'email' => 'required|string|email|max:100|unique:users',
+                'password' => 'required|string|min:6'
+            ]);
+            if ($validator->fails()) {
+                Log::warning("Validation failed while register operation: ".implode('|',$validator->errors()->all()));
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+            $user = User::create(array_merge(
+                $validator->validate(),
+                [
+                    'password' => bcrypt($request->password),
+                    //'createdDate' => now()
+                ]
+            ));
+            return response()->json([
+                'message' => 'Successfully created',
+                'user' => $user
+            ], 201);
+        }catch (\Exception $e) {
+            Log::error("Error while registering user: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error while registering user'], 500);
         }
-        $user = User::create(array_merge(
-            $validator->validate(),
-            [
-                'password' => bcrypt($request->password),
-                //'createdDate' => now()
-            ]
-        ));
-        return response()->json([
-            'message' => 'Successfully created',
-            'user' => $user
-        ], 201);
+        
     }
 
+    private function obfuscateSensitiveData(array $data) 
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->obfuscateSensitiveData($value);
+            } elseif ($this->isSensitiveData($key)) {
+                $data[$key] = '***'; // Ofuscar información sensible
+            }
+        }
+    
+        return $data;
+    }
+
+    private function isSensitiveData(string $key)
+    {
+        return in_array($key, ['email', 'password']);
+    }
 
     public function getMethodLogin() 
     {

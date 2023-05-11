@@ -56,7 +56,7 @@ class UserController extends Controller
     {
         $method_name = 'update()';
         try {
-            Log::debug('Update user request body: '. $this->obfuscateSensitiveData($request->all()));
+            Log::debug('Update user request body: '. $this->obfuscateSensitiveData($request->getContent()));
             if (User::where("id",$id)->exists()) {
                 $user = User::find($id);
                 $user->fill($request->only([
