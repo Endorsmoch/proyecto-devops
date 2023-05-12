@@ -34,7 +34,8 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::debug('Store order request body: '. $request->getContent());
+            $requestContent = json_decode($request->getContent(), true);
+            Log::debug('Store order request body: '. $this->obfuscateSensitiveData($requestContent));
             $validator = Validator::make($request->all(), [
                 'idUser' => 'required',
                 'idProduct' => 'required',
@@ -83,7 +84,8 @@ class OrderController extends Controller
     {
         $method_name = 'update()';
         try {
-            Log::debug('Update order request body: '. $request->getContent());
+            $requestContent = json_decode($request->getContent(), true);
+            Log::debug('Update order request body: '. $this->obfuscateSensitiveData($requestContent));
             if (Order::where("id",$id)->exists()) {
                 $order = Order::find($id);
                 $order->fill($request->only([
@@ -136,6 +138,24 @@ class OrderController extends Controller
             return response()->json(['error' => 'Error while deleting order'], 500);
         }
         
+    }
+
+    private function obfuscateSensitiveData(array $data) 
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->obfuscateSensitiveData($value);
+            } elseif ($this->isSensitiveData($key)) {
+                $data[$key] = '***'; // Ofuscar información sensible
+            }
+        }
+    
+        return json_encode($data);
+    }
+
+    private function isSensitiveData(string $key)
+    {
+        return in_array($key, []);
     }
 
     private function logOrderNotFound(String $method) {
