@@ -162,7 +162,7 @@ class AddressController extends Controller
         return in_array($key, ['houseNum', 'street', 'city', 'state', 'country', 'postalCode']);
     }
 
-    private function logProductNotFound(String $method) {
+    private function logAdressNotFound(String $method) {
         Log::warning("Address not Found while calling $method method in AddressController.");
     }
 

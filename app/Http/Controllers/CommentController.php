@@ -34,7 +34,8 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::debug('Store comment request body: '. $request->getContent());
+            $requestContent = json_decode($request->getContent(), true);
+            Log::debug('Store comment request body: '. $this->obfuscateSensitiveData($requestContent));
             $validator = Validator::make($request->all(), [
                 'idProduct' => 'required',
                 'idUser' => 'required',
@@ -84,7 +85,8 @@ class CommentController extends Controller
     {
         $method_name = 'update()';
         try {
-            Log::debug('Update comment request body: '. $request->getContent());
+            $requestContent = json_decode($request->getContent(), true);
+            Log::debug('Update comment request body: '. $this->obfuscateSensitiveData($requestContent));
             if (Comment::where("id",$id)->exists()) {
                 $comment = Comment::find($id);
                 $comment->fill($request->only([
@@ -136,6 +138,24 @@ class CommentController extends Controller
             return response()->json(['error' => 'Error while deleting comment'], 500);
         }
         
+    }
+
+    private function obfuscateSensitiveData(array $data) 
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->obfuscateSensitiveData($value);
+            } elseif ($this->isSensitiveData($key)) {
+                $data[$key] = '***'; // Ofuscar información sensible
+            }
+        }
+    
+        return json_encode($data);
+    }
+
+    private function isSensitiveData(string $key)
+    {
+        return in_array($key, []);
     }
 
     private function logCommentNotFound(String $method) {
