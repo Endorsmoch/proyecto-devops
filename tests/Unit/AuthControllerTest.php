@@ -10,9 +10,10 @@ class AuthControllerTest extends TestCase
 {
     public function testLoginIsCalledOnce()
     {
+        $request = new Request();
         $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['login'])->getMock();
         $authControllerMock->expects($this->once())->method('login');
-        $authControllerMock->getMethodLogin();   
+        $authControllerMock->getMethodLogin($request);   
     }
 
     public function testRegisterIsCalledOnce()
@@ -25,22 +26,26 @@ class AuthControllerTest extends TestCase
 
     public function testMeIsCalledOnce()
     {
+        $request = new Request();
+
         $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['me'])->getMock();
         $authControllerMock->expects($this->once())->method('me');
-        $authControllerMock->getMethodMe();  
+        $authControllerMock->getMethodMe($request);  
     }
 
     public function testLogoutIsCalledOnce()
     {
+        $request = new Request();
         $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['logout'])->getMock();
         $authControllerMock->expects($this->once())->method('logout');
-        $authControllerMock->getMethodLogout(); 
+        $authControllerMock->getMethodLogout($request); 
     }
 
     public function testRefreshIsCalledOnce()
     {
+        $request = new Request();
         $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['refresh'])->getMock();
         $authControllerMock->expects($this->once())->method('refresh');
-        $authControllerMock->getMethodRefresh(); 
+        $authControllerMock->getMethodRefresh($request); 
     }
 }
