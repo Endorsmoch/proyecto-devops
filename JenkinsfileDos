@@ -12,11 +12,6 @@ pipeline {
     }
 
     stages {
-        stage('Detener Contenedores') {
-            steps {
-                bat 'FOR /f "tokens=*" %%i IN (\'docker ps -q --filter "name=store-backend-1.0.0-" \') DO docker stop %%i'
-            }
-        }
         stage('Construir Imagen') {
             steps {
                 bat "docker build -t store-backend-${BRANCH_NAME}:1.0.0-${buildNumberWithoutQuotes} ."
