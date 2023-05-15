@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Desplegar Imagen') {
             steps {
-                bat "docker run -d -p 8082:80 --name store-backend-1.0.0-${buildNumberWithoutQuotes} --network=store-devops-network store-backend-${BRANCH_NAME}:1.0.0-${buildNumberWithoutQuotes}"
+                bat "docker run -d -p 8000:80 --name store-backend-1.0.0-${buildNumberWithoutQuotes} --network=store-devops-network store-backend-${BRANCH_NAME}:1.0.0-${buildNumberWithoutQuotes}"
             }
         }
     }
