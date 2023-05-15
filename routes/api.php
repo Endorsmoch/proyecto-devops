@@ -29,6 +29,7 @@ Route::group([
     Route::post('refresh', 'App\Http\Controllers\AuthController@getMethodRefresh')->name('auth.refresh');
     Route::get('me', 'App\Http\Controllers\AuthController@getMethodMe')->name('auth.me');
     Route::post('register', 'App\Http\Controllers\AuthController@getMethodRegister')->name('auth.register');
+    Route::get('check', 'App\Http\Controllers\AuthController@checkToken')->name('auth.check');
 });
 
 Route::group([
