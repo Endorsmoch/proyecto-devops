@@ -171,8 +171,11 @@ class AuthController extends Controller
         }
     }
 
-    private function obfuscateSensitiveData(array $data)
+    private function obfuscateSensitiveData($data)
     {
+        if ($data === null) {
+            return null;
+        }
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $data[$key] = $this->obfuscateSensitiveData($value);
@@ -180,7 +183,6 @@ class AuthController extends Controller
                 $data[$key] = '***'; // Ofuscar información sensible
             }
         }
-
         return json_encode($data);
     }
 
