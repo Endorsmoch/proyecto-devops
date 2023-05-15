@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+
 class AuthController extends Controller
 {
     /**
@@ -19,7 +22,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['getMethodLogin', 'getMethodRegister']]);
+        $this->middleware('auth:api', ['except' => ['getMethodLogin', 'getMethodRegister', 'checkToken']]);
     }
 
     /**
@@ -28,10 +31,10 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-    {   
+    {
         try {
             $requestContent = json_decode($request->getContent(), true);
-            Log::debug('User log in request body: '. $this->obfuscateSensitiveData($requestContent));
+            Log::debug('User log in request body: ' . $this->obfuscateSensitiveData($requestContent));
             $credentials = request(['email', 'password']);
             if (!$token = auth()->attempt($credentials)) {
                 Log::warning("Error while executing login operation: Unauthorized Log In.");
@@ -45,9 +48,25 @@ class AuthController extends Controller
             Log::error("Error while loggin in: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
             return response()->json(['error' => 'Error while logging in'], 500);
         }
-        
     }
 
+    public function checkToken(Request $request)
+    {
+        try {
+            $token = JWTAuth::parseToken()->getToken();
+            $user = JWTAuth::authenticate($token);
+            if (!$user) {
+                return response()->json(['valid' => false], 401);
+            }
+            return response()->json(['valid' => true], 200);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['valid' => false], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['valid' => false], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['valid' => false], 500);
+        }
+    }
     /**
      * Get the authenticated User.
      *
@@ -57,7 +76,7 @@ class AuthController extends Controller
     {
         try {
             $requestContent = json_decode($request->getContent(), true);
-            Log::debug('Me method request body: '. $this->obfuscateSensitiveData($requestContent));
+            Log::debug('Me method request body: ' . $this->obfuscateSensitiveData($requestContent));
             $user = auth()->userOrFail();
             return response()->json($user);
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
@@ -77,7 +96,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $requestContent = json_decode($request->getContent(), true);
-        Log::debug('User Logout request body: '. $this->obfuscateSensitiveData($requestContent));
+        Log::debug('User Logout request body: ' . $this->obfuscateSensitiveData($requestContent));
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -91,7 +110,7 @@ class AuthController extends Controller
     {
         try {
             $requestContent = json_decode($request->getContent(), true);
-            Log::debug('Refresh method request body: '. $this->obfuscateSensitiveData($requestContent));
+            Log::debug('Refresh method request body: ' . $this->obfuscateSensitiveData($requestContent));
             return $this->respondWithToken(auth()->refresh());
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
             Log::warning('Invalid token while refreshing token');
@@ -123,16 +142,16 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        try{
+        try {
             $requestContent = json_decode($request->getContent(), true);
-            Log::debug('Register user request body: '. $this->obfuscateSensitiveData($requestContent));
+            Log::debug('Register user request body: ' . $this->obfuscateSensitiveData($requestContent));
             $validator = Validator::make($request->all(), [
                 'userName' => 'required',
                 'email' => 'required|string|email|max:100|unique:users',
                 'password' => 'required|string|min:6'
             ]);
             if ($validator->fails()) {
-                Log::warning("Validation failed while register user operation: ".implode('|',$validator->errors()->all()));
+                Log::warning("Validation failed while register user operation: " . implode('|', $validator->errors()->all()));
                 return response()->json($validator->errors()->toJson(), 400);
             }
             $user = User::create(array_merge(
@@ -146,14 +165,13 @@ class AuthController extends Controller
                 'message' => 'Successfully created',
                 'user' => $user
             ], 201);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Error while registering user: {$e->getMessage()}", ['stacktrace' => $e->getTraceAsString()]);
             return response()->json(['error' => 'Error while registering user'], 500);
         }
-        
     }
 
-    private function obfuscateSensitiveData(array $data) 
+    private function obfuscateSensitiveData(array $data)
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -162,7 +180,7 @@ class AuthController extends Controller
                 $data[$key] = '***'; // Ofuscar información sensible
             }
         }
-    
+
         return json_encode($data);
     }
 
@@ -171,7 +189,7 @@ class AuthController extends Controller
         return in_array($key, ['email', 'password']);
     }
 
-    public function getMethodLogin(Request $request) 
+    public function getMethodLogin(Request $request)
     {
         return $this->login($request);
     }
@@ -181,12 +199,12 @@ class AuthController extends Controller
         return $this->me($request);
     }
 
-    public function getMethodRegister(Request $request) 
+    public function getMethodRegister(Request $request)
     {
         return $this->register($request);
     }
 
-    public function getMethodLogout(Request $request) 
+    public function getMethodLogout(Request $request)
     {
         return $this->logout($request);
     }
@@ -195,5 +213,4 @@ class AuthController extends Controller
     {
         return $this->refresh($request);
     }
-    
 }
