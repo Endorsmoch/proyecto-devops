@@ -20,9 +20,6 @@ COPY nginx.conf /etc/nginx/sites-enabled/
 # Copy Laravel application
 COPY . /var/www/html
 
-# Change ownership of the application
-RUN chown -R 33:33 /var/www/html
-
 # Copy the .env.example file and rename it to .env
 COPY .env.example /var/www/html/.env
 
