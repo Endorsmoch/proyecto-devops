@@ -1,18 +1,14 @@
-FROM ubuntu:20.04
+FROM alpine:3.14
 
 # Set environment variable to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    && add-apt-repository ppa:ondrej/php \
-    && apt-get update \
-    && apt-get install -y \
+RUN apk update && apk add --no-cache \
     nginx \
-    php8.2-fpm \
-    php8.2-mysql \
-    php8.2-xml
+    php8.0-fpm \
+    php8.0-mysqlnd \
+    php8.0-xml
 
 # Copy Nginx configuration file
 COPY nginx.conf /etc/nginx/sites-enabled/
@@ -21,7 +17,7 @@ COPY nginx.conf /etc/nginx/sites-enabled/
 COPY . /var/www/html
 
 # Change ownership of the application
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R nobody:nobody /var/www/html
 
 # Copy the .env.example file and rename it to .env
 COPY .env.example /var/www/html/.env
@@ -42,4 +38,4 @@ RUN rm /etc/nginx/sites-enabled/default
 EXPOSE 80
 
 # Start Nginx and PHP-FPM services
-CMD service php8.2-fpm start && nginx -g "daemon off;"
+CMD php-fpm8.0 -D && nginx -g "daemon off;"
