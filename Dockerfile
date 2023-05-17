@@ -6,8 +6,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install dependencies
 RUN apk update && apk add --no-cache \
     nginx \
+    php8.0 \
     php8.0-fpm \
-    php8.0-mysqlnd \
+    php8.0-mysqli \
     php8.0-xml
 
 # Copy Nginx configuration file
