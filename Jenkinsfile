@@ -4,22 +4,13 @@ pipeline {
     stages {
         stage('Instalar Dependencias') {
             steps {
-                bat 'composer install'
-            }
-        }
-        stage('Base de datos') {
-            steps {
-                bat 'copy .env.example .env'
-            }
-        }
-        stage('Key Generate base de datos') {
-            steps {
-                bat 'php artisan key:generate'
-            }
-        }
-        stage('Migrar base de datos') {
-            steps {
-                bat 'php artisan migrate'
+                cache {
+                    key 'composer-dependencies' // Clave única para identificar el caché
+                    paths 'vendor', 'composer.lock' // Rutas de los directorios y archivos que deseas cachear
+                    steps {
+                        bat 'composer install'
+                    }
+                }
             }
         }
         stage('Ejecutar Test Cases') {
