@@ -4,13 +4,7 @@ pipeline {
     stages {
         stage('Instalar Dependencias') {
             steps {
-                cache {
-                    key 'composer-dependencies' // Clave única para identificar el caché
-                    paths 'vendor', 'composer.lock' // Rutas de los directorios y archivos que deseas cachear
-                    steps {
-                        bat 'composer install'
-                    }
-                }
+                bat 'composer install'
             }
         }
         stage('Ejecutar Test Cases') {
