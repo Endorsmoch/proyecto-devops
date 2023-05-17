@@ -20,6 +20,11 @@ COPY nginx.conf /etc/nginx/sites-enabled/
 # Copy Laravel application
 COPY . /var/www/html
 
+RUN chown -R www-data:www-data \
+    /var/www/html/storage \
+    /var/www/html/bootstrap/cache \
+    /var/www/html/public/uploads
+
 # Copy the .env.example file and rename it to .env
 COPY .env.example /var/www/html/.env
 
