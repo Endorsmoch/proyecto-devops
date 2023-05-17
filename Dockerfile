@@ -29,6 +29,9 @@ COPY .env.example /var/www/html/.env
 # Generate application key
 RUN php /var/www/html/artisan key:generate --env=/var/www/html/.env
 
+# Run database migrations
+RUN php /var/www/html/artisan migrate --env=/var/www/html/.env
+
 # Clear cache
 RUN php /var/www/html/artisan config:cache
 

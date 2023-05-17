@@ -2,31 +2,9 @@ pipeline {
     agent any
     
     stages {
-        stage('Clonar Repositorio de Github') {
-            steps {
-                checkout([$class: 'GitSCM',
-                          branches: [[name: '*/develop']],
-                          userRemoteConfigs: [[url: 'https://github.com/Endorsmoch/proyecto-devops.git']]])
-            }
-        }
         stage('Instalar Dependencias') {
             steps {
                 bat 'composer install'
-            }
-        }
-        stage('Base de datos') {
-            steps {
-                bat 'copy .env.example .env'
-            }
-        }
-        stage('Key Generate base de datos') {
-            steps {
-                bat 'php artisan key:generate'
-            }
-        }
-        stage('Migrar base de datos') {
-            steps {
-                bat 'php artisan migrate'
             }
         }
         stage('Ejecutar Test Cases') {
