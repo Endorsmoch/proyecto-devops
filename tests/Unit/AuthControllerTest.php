@@ -5,47 +5,35 @@ namespace Tests\Unit;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthControllerTest extends TestCase
 {
-    public function testLoginIsCalledOnce()
-    {
-        $request = new Request();
-        $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['login'])->getMock();
-        $authControllerMock->expects($this->once())->method('login');
-        $authControllerMock->getMethodLogin($request);   
-    }
+    use RefreshDatabase;
 
-    public function testRegisterIsCalledOnce()
-    {
-        $request = new Request();
-        $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['register'])->getMock();
-        $authControllerMock->expects($this->once())->method('register');
-        $authControllerMock->getMethodRegister($request);   
-    }
 
-    public function testMeIsCalledOnce()
+    public function testRegisterLoginAndLogoutMethod()
     {
-        $request = new Request();
+        $data = [
+            'userName' => 'Endor',
+            'email' => 'endor@correo.com',
+            'password' => 'elsapo'
+        ];
 
-        $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['me'])->getMock();
-        $authControllerMock->expects($this->once())->method('me');
-        $authControllerMock->getMethodMe($request);  
-    }
+        $response = $this->json('POST', 'api/auth/register', $data);
+        $response->assertSee('Successfully created')->assertSee('Endor');
 
-    public function testLogoutIsCalledOnce()
-    {
-        $request = new Request();
-        $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['logout'])->getMock();
-        $authControllerMock->expects($this->once())->method('logout');
-        $authControllerMock->getMethodLogout($request); 
-    }
+        $data2 = [
+            'email' => 'endor@correo.com',
+            'password' => 'elsapo'
+        ];
 
-    public function testRefreshIsCalledOnce()
-    {
-        $request = new Request();
-        $authControllerMock = $this->getMockBuilder(AuthController::class)->onlyMethods(['refresh'])->getMock();
-        $authControllerMock->expects($this->once())->method('refresh');
-        $authControllerMock->getMethodRefresh($request); 
+        $response = $this->json('POST', 'api/auth/login', $data2);
+        $response->assertSee('access_token');
+
+        $this->post('/api/auth/logout')->assertSee('Successfully logged out');
+
     }
+   
 }
