@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use Mockery;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use App\Http\Controllers\UserController;
@@ -54,7 +53,7 @@ class UserControllerTest extends TestCase
             'password' => '5678'
         ]);
 
-        $this->get('/api/account/users/3')
+        $this->get('/api/account/users/4')
         ->assertSee('john.doe@example.com');
     }
 
@@ -69,7 +68,7 @@ class UserControllerTest extends TestCase
         $data = [
             'userName' => 'Endor'
         ];
-        $response = $this->json('PUT', 'api/account/users/5', $data);
+        $response = $this->json('PUT', 'api/account/users/6', $data);
         $response->assertSee('User updated successfully')->assertSee('Endor');
     }
 
@@ -81,7 +80,7 @@ class UserControllerTest extends TestCase
             'password' => '5678'
         ]);
 
-        $this->delete('/api/account/users/6')
+        $this->delete('/api/account/users/7')
         ->assertSee('User deleted successfully');
     }
 
