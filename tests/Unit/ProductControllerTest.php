@@ -55,7 +55,7 @@ class ProductControllerTest extends TestCase
         ];
 
         $response = $this->json('POST', 'api/store/products', $data);
-        $response->assertSee('PlayStation 5');
+        $response->assertSee('Product successfully created')->assertSee('PlayStation 5');
     }
     
     public function testShowMethod()
@@ -92,7 +92,7 @@ class ProductControllerTest extends TestCase
 
         $data = ['price' => 17500];
         $response = $this->json('PUT', 'api/store/products/6', $data);
-        $response->assertSee('Samsung S9')->assertSee(17500);
+        $response->assertSee('Product updated successfully')->assertSee('Samsung S9')->assertSee(17500);
 
     }
 
@@ -107,7 +107,5 @@ class ProductControllerTest extends TestCase
         ]);
         $this->delete('/api/store/products/7')
         ->assertSee('Product deleted successfully');
-    }
-
-    
+    }    
 }
