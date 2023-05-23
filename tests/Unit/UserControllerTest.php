@@ -8,61 +8,81 @@ use Illuminate\Support\Collection;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UserControllerTest extends TestCase
 {
-    public function testIndexIsCalledOnce()
+    use RefreshDatabase;
+
+    protected function setUp(): void
     {
-        $userControllerMock = $this->getMockBuilder(UserController::class)->onlyMethods(['index'])->getMock();
-        $userControllerMock->expects($this->once())->method('index');
-        $userControllerMock->getMethodIndex();   
+        parent::setUp();
+
+        $this->withoutMiddleware(\App\Http\Middleware\Authenticate::class);
     }
 
-    public function testShowIsCalledOnce()
+    public function testIndexMethod()
     {
-        $userControllerMock = $this->getMockBuilder(UserController::class)->onlyMethods(['show'])->getMock();
-        $userControllerMock->expects($this->once())->method('show');
-        $userControllerMock->getMethodShow("1");   
-    }
-
-    public function testUpdateIsCalledOnce()
-    {
-        $request = new Request();
-        $userControllerMock = $this->getMockBuilder(UserController::class)->onlyMethods(['update'])->getMock();
-        $userControllerMock->expects($this->once())->method('update');
-        $userControllerMock->getMethodUpdate($request,"1");  
-    }
-
-    public function testDestroyIsCalledOnce()
-    {
-        $userControllerMock = $this->getMockBuilder(UserController::class)->onlyMethods(['destroy'])->getMock();
-        $userControllerMock->expects($this->once())->method('destroy');
-        $userControllerMock->getMethodDestroy("1"); 
-    }
-
-    public function testIndexMethodReturnsAllUsers()
-    {
-        // Creamos un objeto simulado de la clase User
-        $user1 = new User([
+        User::factory()->create([
             'userName' => 'John Doe',
             'email' => 'john.doe@example.com',
+            'password' => '1234'
         ]);
-        $user2 = new User([
+
+        User::factory()->create([
             'userName' => 'Jane Doe',
             'email' => 'jane.doe@example.com',
+            'password' => '5678'
         ]);
-        $users = new Collection([$user1, $user2]);
 
-
-        // Creamos un objeto simulado de la clase UserController
-        $userController = Mockery::mock(UserController::class);
-
-        // Definimos el comportamiento esperado del método index
-        $userController->shouldReceive('index')
-            ->once()
-            ->andReturn($users);
-
-        // Ejecutamos el método index del controlador y comprobamos que devuelve el valor esperado
-        $this->assertEquals($users, $userController->index());
+        $this->get('/api/account/users')
+        ->assertSee('John Doe')
+        ->assertSee('Jane Doe');
     }
+
+    public function testShowMethod()
+    {
+        User::factory()->create([
+            'userName' => 'John Doe',
+            'email' => 'john.doe@example.com',
+            'password' => '1234'
+        ]);
+
+        User::factory()->create([
+            'userName' => 'Jane Doe',
+            'email' => 'jane.doe@example.com',
+            'password' => '5678'
+        ]);
+
+        $this->get('/api/account/users/3')
+        ->assertSee('john.doe@example.com');
+    }
+
+    public function testUpdateMethod()
+    {
+        User::factory()->create([
+            'userName' => 'John Doe',
+            'email' => 'john.doe@example.com',
+            'password' => '1234'
+        ]);
+
+        $data = [
+            'userName' => 'Endor'
+        ];
+        $response = $this->json('PUT', 'api/account/users/5', $data);
+        $response->assertSee('User updated successfully')->assertSee('Endor');
+    }
+
+    public function testDestroyMethod()
+    {
+        User::factory()->create([
+            'userName' => 'Jane Doe',
+            'email' => 'jane.doe@example.com',
+            'password' => '5678'
+        ]);
+
+        $this->delete('/api/account/users/6')
+        ->assertSee('User deleted successfully');
+    }
+
 }
