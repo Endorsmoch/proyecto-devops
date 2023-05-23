@@ -5,45 +5,123 @@ namespace Tests\Unit;
 use App\Http\Controllers\AddressController;
 use Illuminate\Http\Request;
 use Tests\TestCase;
+use App\Models\Address;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AddressControllerTest extends TestCase
 {
-    public function testIndexIsCalledOnce()
+    use RefreshDatabase;
+
+    protected function setUp(): void
     {
-        $addressControllerMock = $this->getMockBuilder(AddressController::class)->onlyMethods(['index'])->getMock();
-        $addressControllerMock->expects($this->once())->method('index');
-        $addressControllerMock->getMethodIndex();   
+        parent::setUp();
+
+        $this->withoutMiddleware(\App\Http\Middleware\Authenticate::class);
     }
 
-    public function testStoreIsCalledOnce()
+    public function testIndexMethod()
     {
-        $request = new Request();
-        $addressControllerMock = $this->getMockBuilder(AddressController::class)->onlyMethods(['store'])->getMock();
-        $addressControllerMock->expects($this->once())->method('store');
-        $addressControllerMock->getMethodStore($request);   
+        Address::factory()->create([
+            'idUser' => 1,
+            'houseNum' => '456',
+            'street' => '43-A',
+            'city' => 'Merida',
+            'state' => 'Yucatan',
+            'country' =>'Mexico',
+            'postalCode' => '97152'
+        ]);
+
+        Address::factory()->create([
+            'idUser' => 2,
+            'houseNum' => '109',
+            'street' => '304',
+            'city' => 'Cancun',
+            'state' => 'Quintana Roo',
+            'country' =>'Mexico',
+            'postalCode' => '99201'
+        ]);
+
+        $this->get('/api/store/addresses')
+        ->assertSee('Merida')
+        ->assertSee('Cancun');
     }
 
-    public function testShowIsCalledOnce()
+    public function testStoreMethod()
     {
-        $addressControllerMock = $this->getMockBuilder(AddressController::class)->onlyMethods(['show'])->getMock();
-        $addressControllerMock->expects($this->once())->method('show');
-        $addressControllerMock->getMethodShow("1");   
+        $data = [
+            'idUser' => 3,
+            'houseNum' => '191',
+            'street' => '34-B',
+            'city' => 'Ciudad del Carmen',
+            'state' => 'Campeche',
+            'country' =>'Mexico',
+            'postalCode' => '91012'
+        ];
+        $response = $this->json('POST', 'api/store/addresses', $data);
+        $response->assertSee('Address successfully created')->assertSee('Ciudad del Carmen');
     }
 
-    public function testUpdateIsCalledOnce()
+    public function testShowMethod()
     {
-        $request = new Request();
-        $addressControllerMock = $this->getMockBuilder(AddressController::class)->onlyMethods(['update'])->getMock();
-        $addressControllerMock->expects($this->once())->method('update');
-        $addressControllerMock->getMethodUpdate($request,"1");  
+        Address::factory()->create([
+            'idUser' => 1,
+            'houseNum' => '456',
+            'street' => '43-A',
+            'city' => 'Merida',
+            'state' => 'Yucatan',
+            'country' =>'Mexico',
+            'postalCode' => '97152'
+        ]);
+
+        Address::factory()->create([
+            'idUser' => 2,
+            'houseNum' => '109',
+            'street' => '304',
+            'city' => 'Cancun',
+            'state' => 'Quintana Roo',
+            'country' =>'Mexico',
+            'postalCode' => '99201'
+        ]);
+
+        $this->get('/api/store/address/4')
+        ->assertSee('Merida');
     }
 
-    public function testDestroyIsCalledOnce()
+    public function testUpdateMethod()
     {
-        $addressControllerMock = $this->getMockBuilder(AddressController::class)->onlyMethods(['destroy'])->getMock();
-        $addressControllerMock->expects($this->once())->method('destroy');
-        $addressControllerMock->getMethodDestroy("1"); 
+        Address::factory()->create([
+            'idUser' => 2,
+            'houseNum' => '109',
+            'street' => '304',
+            'city' => 'Cancun',
+            'state' => 'Quintana Roo',
+            'country' =>'Mexico',
+            'postalCode' => '99201'
+        ]);
+
+        $data = [
+            'city' => 'Monterrey',
+            'state' => 'Nuevo Leon'
+        ];
+
+        $response = $this->json('PUT', 'api/store/address/6', $data);
+        $response->assertSee('Address updated successfully')->assertSee('Monterrey')->assertSee('Nuevo Leon');
     }
 
+    public function testDestroyMethod()
+    {
+        Address::factory()->create([
+            'idUser' => 1,
+            'houseNum' => '456',
+            'street' => '43-A',
+            'city' => 'Merida',
+            'state' => 'Yucatan',
+            'country' =>'Mexico',
+            'postalCode' => '97152'
+        ]);
+
+        $this->delete('/api/store/address/7')
+        ->assertSee('Record deleted');
+    }
     
 }
