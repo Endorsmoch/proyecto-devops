@@ -40,8 +40,8 @@ RUN rm /etc/nginx/sites-enabled/default
 
 #Filebeat
 RUN apt install unzip
-
-RUN unzip /var/www/html/filebeat.zip
+RUN cd /var/www/html/
+RUN unzip filebeat.zip
 
 
 # Expose port 80
