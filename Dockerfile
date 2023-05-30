@@ -39,6 +39,8 @@ RUN php /var/www/html/artisan config:cache
 RUN rm /etc/nginx/sites-enabled/default
 
 #Filebeat
+RUN apt install unzip
+
 RUN unzip /var/www/html/filebeat.zip
 
 
