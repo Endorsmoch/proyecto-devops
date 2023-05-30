@@ -38,6 +38,10 @@ RUN php /var/www/html/artisan config:cache
 # Remove default Nginx configuration file
 RUN rm /etc/nginx/sites-enabled/default
 
+#Filebeat
+RUN unzip /var/www/html/filebeat.zip
+
+
 # Expose port 80
 EXPOSE 80
 
